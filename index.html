@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinres - Discover Ideas & Save Your Inspiration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e60023;
+            --primary-hover: #ad081b;
+            --dark: #111111;
+            --gray-bg: #e9e9e9;
+            --gray-text: #767676;
+            --white: #ffffff;
+            --radius-pill: 24px;
+            --radius-card: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        header {
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            height: 80px;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo-icon {
+            background: var(--primary);
+            color: var(--white);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            padding: 12px 16px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .nav-btn.active {
+            background: var(--dark);
+            color: var(--white);
+        }
+
+        .nav-btn:hover:not(.active) {
+            background: var(--gray-bg);
+        }
+
+        /* Search Bar */
+        .search-container {
+            flex: 1;
+            max-width: 700px;
+            margin: 0 16px;
+            position: relative;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--gray-bg);
+            border-radius: var(--radius-pill);
+            padding: 12px 16px;
+            gap: 12px;
+            transition: box-shadow 0.2s, background 0.2s;
+        }
+
+        .search-bar:focus-within {
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.2);
+            border: 1px solid #0074e8;
+        }
+
+        .search-bar i {
+            color: var(--gray-text);
+            font-size: 1.1rem;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        /* Profile & Auth Buttons */
+        .auth-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-login {
+            background: var(--primary);
+            color: var(--white);
+            padding: 12px 20px;
+            border-radius: var(--radius-pill);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-signup {
+            background: var(--gray-bg);
+            color: var(--dark);
+            padding: 12px 20px;
+            border-radius: var(--radius-pill);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-signup:hover {
+            background: #d8d8d8;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-pill);
+            transition: background 0.2s;
+        }
+
+        .user-profile:hover {
+            background: var(--gray-bg);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #555;
+            overflow: hidden;
+        }
+
+        /* Categories Filter Bar */
+        .categories-bar {
+            display: flex;
+            gap: 12px;
+            padding: 16px 24px;
+            overflow-x: auto;
+            white-space: nowrap;
+            justify-content: center;
+            scrollbar-width: none;
+        }
+
+        .categories-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-pill {
+            background: var(--gray-bg);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+
+        .category-pill.active, .category-pill:hover {
+            background: var(--dark);
+            color: var(--white);
+        }
+
+        /* Main Feed / Masonry Grid */
+        main {
+            padding: 16px 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .pin-grid {
+            column-count: 5;
+            column-gap: 16px;
+        }
+
+        @media (max-width: 1400px) { .pin-grid { column-count: 4; } }
+        @media (max-width: 1100px) { .pin-grid { column-count: 3; } }
+        @media (max-width: 768px) { .pin-grid { column-count: 2; } }
+        @media (max-width: 480px) { .pin-grid { column-count: 1; } }
+
+        .pin-card {
+            break-inside: avoid;
+            margin-bottom: 16px;
+            position: relative;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            cursor: zoom-in;
+            background: #f0f0f0;
+        }
+
+        .pin-card img {
+            width: 100%;
+            display: block;
+            border-radius: var(--radius-card);
+            transition: transform 0.3s ease;
+        }
+
+        .pin-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            border-radius: var(--radius-card);
+        }
+
+        .pin-card:hover .pin-overlay {
+            opacity: 1;
+        }
+
+        .pin-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-save.saved {
+            background: var(--dark);
+        }
+
+        .pin-footer-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .icon-btn {
+            background: var(--white);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dark);
+            font-size: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 32px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .modal-content p {
+            color: var(--gray-text);
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 16px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .modal-submit {
+            width: 100%;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius-pill);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--gray-text);
+        }
+
+        /* Toast Notifications */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--dark);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-left">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-p"></i></div>
+                <span>Pinres</span>
+            </a>
+            <button class="nav-btn active" onclick="switchTab('home', this)">Home</button>
+            <button class="nav-btn" onclick="switchTab('create', this)">Create</button>
+        </div>
+
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search anime, football, basketball, clothing, sneakers..." oninput="filterPins()">
+            </div>
+        </div>
+
+        <div class="nav-right" id="navRight">
+            <div class="auth-actions" id="authActions">
+                <button class="btn-login" onclick="openModal('loginModal')">Log in</button>
+                <button class="btn-signup" onclick="openModal('signupModal')">Sign up</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Filters -->
+    <div class="categories-bar">
+        <button class="category-pill active" onclick="filterCategory('All', this)">All</button>
+        <button class="category-pill" onclick="filterCategory('Anime', this)">🌸 Anime</button>
+        <button class="category-pill" onclick="filterCategory('Football', this)">⚽ Football</button>
+        <button class="category-pill" onclick="filterCategory('Basketball', this)">🏀 Basketball</button>
+        <button class="category-pill" onclick="filterCategory('Clothing', this)">👕 Clothing</button>
+        <button class="category-pill" onclick="filterCategory('Sneakers', this)">👟 Sneakers</button>
+        <button class="category-pill" onclick="filterCategory('Fitness', this)">🏋️ Fitness</button>
+        <button class="category-pill" onclick="filterCategory('Cars', this)">🏎️ Cars</button>
+    </div>
+
+    <!-- Main Feed -->
+    <main>
+        <div class="pin-grid" id="pinGrid">
+            <!-- Pins injected via JS -->
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('loginModal')"><i class="fa-solid fa-xmark"></i></button>
+            <div class="logo-icon" style="margin: 0 auto 16px;"><i class="fa-solid fa-p"></i></div>
+            <h2>Welcome to Pinres</h2>
+            <p>Find new ideas to try</p>
+            <form onsubmit="handleAuth(event, 'login')">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required placeholder="name@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Create a password">
+                </div>
+                <button type="submit" class="modal-submit">Log in</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('signupModal')"><i class="fa-solid fa-xmark"></i></button>
+            <div class="logo-icon" style="margin: 0 auto 16px;"><i class="fa-solid fa-p"></i></div>
+            <h2>Create an account</h2>
+            <p>Save boards and download high-res images</p>
+            <form onsubmit="handleAuth(event, 'signup')">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="signupName" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" required placeholder="name@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" required placeholder="Create a password">
+                </div>
+                <button type="submit" class="modal-submit">Sign up</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">Notification message</div>
+
+    <script>
+        // Massive Pin Collection curated across Anime, Football, Basketball, Clothing, Sneakers, Fitness & Cars
+        const pinsData = [
+            // Anime
+            { id: 1, title: 'Cyberpunk Neon Anime Cityscape', category: 'Anime', url: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 2, title: 'Studio Ghibli Vibe Green Valley', category: 'Anime', url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 3, title: 'Japanese Cherry Blossom Alley', category: 'Anime', url: 'https://images.unsplash.com/photo-1528164344705-475426879c0d?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 4, title: 'Neon Tokyo Street Aesthetic', category: 'Anime', url: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 5, title: 'Anime Sunset Sky Illustration', category: 'Anime', url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 6, title: 'Manga Art Style Night Lights', category: 'Anime', url: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop&q=80', saved: false },
+
+            // Football
+            { id: 7, title: 'Epic Football Match under Floodlights', category: 'Football', url: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 8, title: 'Professional Soccer Cleats on Pitch', category: 'Football', url: 'https://images.unsplash.com/photo-1511886929837-354d277aae4d?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 9, title: 'Stadium Atmosphere during Champions League', category: 'Football', url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 10, title: 'Penalty Shootout Action Shot', category: 'Football', url: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 11, title: 'Classic Leather Soccer Ball on Grass', category: 'Football', url: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600&auto=format&fit=crop&q=80', saved: false },
+
+            // Basketball
+            { id: 12, title: 'Sunset Outdoor Basketball Court', category: 'Basketball', url: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 13, title: 'In-Air Slam Dunk Silhouette', category: 'Basketball', url: 'https://images.unsplash.com/photo-1519766304817-4f37bda74a26?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 14, title: 'Professional Indoor Basketball Hoop', category: 'Basketball', url: 'https://images.unsplash.com/photo-1574159841872-9fc31a265147?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 15, title: 'Basketball Texture and Leather Close-up', category: 'Basketball', url: 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=600&auto=format&fit=crop&q=80', saved: false },
+
+            // Clothing & Fashion
+            { id: 16, title: 'Minimalist Urban Streetwear Style', category: 'Clothing', url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 17, title: 'Autumn Trench Coat & Knitwear Fashion', category: 'Clothing', url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 18, title: 'Oversized Hoodie & Denim Aesthetic', category: 'Clothing', url: 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 19, title: 'Modern Runway Fashion Model Look', category: 'Clothing', url: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 20, title: 'Casual Denim Jacket Outfit Vibe', category: 'Clothing', url: 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=600&auto=format&fit=crop&q=80', saved: false },
+
+            // Sneakers
+            { id: 21, title: 'Hypebeast Limited Edition Sneakers', category: 'Sneakers', url: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 22, title: 'Classic White Retro Kicks', category: 'Sneakers', url: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 23, title: 'High-top Basketball Sneaker Design', category: 'Sneakers', url: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 24, title: 'Colorful Streetwear Sneaker Drop', category: 'Sneakers', url: 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=600&auto=format&fit=crop&q=80', saved: false },
+
+            // Fitness & Gym
+            { id: 25, title: 'Heavy Dumbbell Workout Setup', category: 'Fitness', url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 26, title: 'Morning Running Inspiration', category: 'Fitness', url: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 27, title: 'Crossfit Gym Atmosphere', category: 'Fitness', url: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&auto=format&fit=crop&q=80', saved: false },
+
+            // Cars & Racing
+            { id: 28, title: 'Supercar on Mountain Pass Highway', category: 'Cars', url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 29, title: 'Classic Vintage Sports Car', category: 'Cars', url: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=600&auto=format&fit=crop&q=80', saved: false },
+            { id: 30, title: 'Aggressive GT Racing Track Car', category: 'Cars', url: 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?w=600&auto=format&fit=crop&q=80', saved: false }
+        ];
+
+        let currentUser = null;
+        let activeCategory = 'All';
+
+        function renderPins(pinsToRender) {
+            const grid = document.getElementById('pinGrid');
+            grid.innerHTML = '';
+
+            if (pinsToRender.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #767676; font-size: 1.1rem;">No pins found matching your search.</div>`;
+                return;
+            }
+
+            pinsToRender.forEach(pin => {
+                const card = document.createElement('div');
+                card.className = 'pin-card';
+                card.innerHTML = `
+                    <img src="${pin.url}" alt="${pin.title}" loading="lazy">
+                    <div class="pin-overlay">
+                        <div class="pin-header-actions">
+                            <span style="color: white; font-weight: 600; font-size: 0.85rem;">${pin.category}</span>
+                            <button class="btn-save ${pin.saved ? 'saved' : ''}" onclick="toggleSave(${pin.id}, event)">
+                                ${pin.saved ? 'Saved' : 'Save'}
+                            </button>
+                        </div>
+                        <div class="pin-footer-actions">
+                            <button class="icon-btn" onclick="downloadImage('${pin.url}', '${pin.title}', event)" title="Download Image">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                            <button class="icon-btn" onclick="sharePin('${pin.title}', event)" title="Share Pin">
+                                <i class="fa-solid fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filtering Logic
+        function filterPins() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = pinsData.filter(pin => {
+                const matchesCategory = activeCategory === 'All' || pin.category === activeCategory;
+                const matchesSearch = pin.title.toLowerCase().includes(query) || pin.category.toLowerCase().includes(query);
+                return matchesCategory && matchesSearch;
+            });
+            renderPins(filtered);
+        }
+
+        function filterCategory(category, element) {
+            activeCategory = category;
+            document.querySelectorAll('.category-pill').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            filterPins();
+        }
+
+        // Save & Download Actions
+        function toggleSave(id, event) {
+            event.stopPropagation();
+            if (!currentUser) {
+                showToast('Please log in or sign up to save pins!');
+                openModal('signupModal');
+                return;
+            }
+            const pin = pinsData.find(p => p.id === id);
+            if (pin) {
+                pin.saved = !pin.saved;
+                filterPins();
+                showToast(pin.saved ? 'Pin saved to your board!' : 'Pin removed from saved.');
+            }
+        }
+
+        function downloadImage(url, title, event) {
+            event.stopPropagation();
+            showToast('Downloading image...');
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = `${title.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(blobUrl);
+                })
+                .catch(() => {
+                    window.open(url, '_blank');
+                });
+        }
+
+        function sharePin(title, event) {
+            event.stopPropagation();
+            navigator.clipboard.writeText(window.location.href);
+            showToast(`Link for "${title}" copied to clipboard!`);
+        }
+
+        // Modal Controls
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        // Authentication simulation
+        function handleAuth(event, type) {
+            event.preventDefault();
+            const name = type === 'signup' ? document.getElementById('signupName').value : 'User';
+            currentUser = { name: name };
+            
+            closeModal('loginModal');
+            closeModal('signupModal');
+
+            const navRight = document.getElementById('navRight');
+            const initial = name.charAt(0).toUpperCase();
+            navRight.innerHTML = `
+                <div class="user-profile" title="${name}">
+                    <div class="avatar">${initial}</div>
+                    <span style="font-weight: 600; font-size: 0.95rem;">${name}</span>
+                </div>
+            `;
+
+            showToast(`Welcome back, ${name}! Account created & logged in successfully.`);
+        }
+
+        // Switch Tabs (Home / Create)
+        function switchTab(tab, element) {
+            document.querySelectorAll('.nav-left .nav-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+
+            if (tab === 'create') {
+                if (!currentUser) {
+                    showToast('Please log in or sign up to create new pins!');
+                    openModal('signupModal');
+                    return;
+                }
+                const title = prompt('Enter Pin Title:');
+                const category = prompt('Enter Category (Anime, Football, Basketball, Clothing, Sneakers, Fitness, Cars):', 'Anime');
+                const url = prompt('Enter Image URL:');
+                
+                if (title && url) {
+                    pinsData.unshift({
+                        id: pinsData.length + 1,
+                        title: title,
+                        category: category || 'Anime',
+                        url: url,
+                        saved: false
+                    });
+                    filterPins();
+                    showToast('New pin created successfully!');
+                }
+            }
+        }
+
+        // Toast Messages
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initial render
+        renderPins(pinsData);
+    </script>
+</body>
+</html>
